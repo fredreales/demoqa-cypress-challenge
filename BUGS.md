@@ -145,13 +145,13 @@ All three are accepted, they are well-formed addresses on real TLDs.
 All three are rejected: the field turns red and the form does not submit. Changing only the TLD
 to `.com` submits the same form successfully. Measured against the live field:
 
-| Address              | TLD          | Length | Accepted |
-| -------------------- | ------------ | ------ | -------- |
-| ada@example.co       | `co`         | 2      | yes      |
-| ada@example.com      | `com`        | 3      | yes      |
-| ada@example.info     | `info`       | 4      | yes      |
-| qa@records.museum    | `museum`     | 6      | **no**   |
-| hello@my.agency      | `agency`     | 6      | **no**   |
+| Address               | TLD          | Length | Accepted |
+| --------------------- | ------------ | ------ | -------- |
+| ada@example.co        | `co`         | 2      | yes      |
+| ada@example.com       | `com`        | 3      | yes      |
+| ada@example.info      | `info`       | 4      | yes      |
+| qa@records.museum     | `museum`     | 6      | **no**   |
+| hello@my.agency       | `agency`     | 6      | **no**   |
 | qa@example.technology | `technology` | 10     | **no**   |
 
 ### Evidence
@@ -267,8 +267,8 @@ Two candidates were dropped rather than reported, both worth recording:
   sets the value without setting the input's _dirty value flag_, so the browser never evaluates
   the `minlength` constraint. Typed by hand, or by Playwright's `fill()`, the browser blocks
   submission with "Please lengthen this text to 10 characters or more". A tooling artifact, not an
-  application defect. The suite therefore does not assert this rule; see "Known limitations" in
-  the README.
+  application defect. The suite therefore does not assert this rule, rather than asserting a pass
+  that would be false.
 - **Stale output panel on Text Box.** After a rejected submission the output panel keeps showing
   the previous successful submission's values. Arguably misleading, but "the panel shows the last
   successful submission" is a defensible reading, so it did not meet the bar for a report.
