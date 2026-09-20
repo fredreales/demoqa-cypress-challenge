@@ -1,0 +1,32 @@
+{
+  "name": "demoqa-cypress-challenge",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Cypress UI automation suite for https://demoqa.com",
+  "scripts": {
+    "test": "cypress run",
+    "test:ui": "cypress run --spec 'cypress/e2e/ui/*.cy.js'",
+    "test:api": "cypress run --spec 'cypress/e2e/api/*.cy.js'",
+    "test:smoke": "cypress run --expose grepTags=@smoke",
+    "test:no-signup": "cypress run --expose grepTags=-@creates-account",
+    "test:headed": "cypress run --headed --browser chrome",
+    "test:chrome": "cypress run --browser chrome",
+    "test:spec": "cypress run --spec",
+    "open": "cypress open",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
+    "format": "prettier --write .",
+    "format:check": "prettier --check ."
+  },
+  "devDependencies": {
+    "@cypress/grep": "^7.0.0",
+    "@eslint/js": "^9.39.5",
+    "@faker-js/faker": "^10.6.0",
+    "cypress": "^15.4.0",
+    "cypress-mochawesome-reporter": "^5.0.0",
+    "eslint": "^9.39.5",
+    "eslint-plugin-cypress": "^4.3.0",
+    "globals": "^17.12.0",
+    "prettier": "^3.9.8"
+  }
+}
