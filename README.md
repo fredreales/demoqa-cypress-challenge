@@ -161,22 +161,6 @@ subset rather than labelling all 71 tests.
 Across the runs done while building this, the only non-deterministic failures came from the ad
 stack; after `blockHosts` was added, the main suite has been stable run to run.
 
-## Known limitations
-
-**`minlength` cannot be exercised through `cy.type()`.** The mobile field on the practice form
-declares `minlength="10"` and under Cypress an 8-digit number submits happily. That is not an
-application bug: `cy.type()` sets the value without setting the input's _dirty value flag_, so the
-browser never evaluates the `minlength` constraint. Typed by hand, or by Playwright's `fill()`,
-the browser blocks submission with "Please lengthen this text to 10 characters or more". The suite
-therefore does not assert that rule at all, rather than asserting a passing result that would be
-false. `pattern` validation is unaffected and _is_ covered (letters in the mobile field, malformed
-e-mail addresses). This cost me a false bug report before I caught it, see "Investigated and
-dismissed" in [BUGS.md](BUGS.md).
-
-**The suite runs against production.** There is no seeded environment or API to set state, so
-Web Tables coverage relies on the three records the page ships with and on state resetting per
-reload. Data-dependent assertions are kept to those three known rows.
-
 ## Coverage
 
 | Spec                        | Scenarios                                                                                                                                                                                                                                                                                                                                                                     |
