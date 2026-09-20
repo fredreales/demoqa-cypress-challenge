@@ -1,0 +1,8 @@
+{
+  "invalid": [
+    { "value": "plainstring", "reason": "no @ and no domain" },
+    { "value": "missing-domain@", "reason": "no domain part" },
+    { "value": "@example.com", "reason": "no local part" },
+    { "value": "spaces in@example.com", "reason": "whitespace in local part" }
+  ]
+}
