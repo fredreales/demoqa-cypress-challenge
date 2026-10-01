@@ -15,23 +15,47 @@ export default class AlertsPage extends BasePage {
     this.selectors = selectors;
   }
 
+  get simpleAlertButton() {
+    return cy.get(selectors.simpleAlert);
+  }
+
+  get timerAlertButton() {
+    return cy.get(selectors.timerAlert);
+  }
+
+  get confirmButton() {
+    return cy.get(selectors.confirm);
+  }
+
+  get confirmResult() {
+    return cy.get(selectors.confirmResult);
+  }
+
+  get promptButton() {
+    return cy.get(selectors.prompt);
+  }
+
+  get promptResult() {
+    return cy.get(selectors.promptResult);
+  }
+
   clickSimpleAlert() {
-    cy.get(selectors.simpleAlert).click();
+    this.simpleAlertButton.click();
     return this;
   }
 
   clickTimerAlert() {
-    cy.get(selectors.timerAlert).click();
+    this.timerAlertButton.click();
     return this;
   }
 
   clickConfirm() {
-    cy.get(selectors.confirm).click();
+    this.confirmButton.click();
     return this;
   }
 
   clickPrompt() {
-    cy.get(selectors.prompt).click();
+    this.promptButton.click();
     return this;
   }
 }

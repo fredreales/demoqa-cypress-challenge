@@ -16,23 +16,48 @@ export default class ModalDialogsPage extends BasePage {
     this.selectors = selectors;
   }
 
+  get smallModalButton() {
+    return cy.get(selectors.smallModalButton);
+  }
+
+  get largeModalButton() {
+    return cy.get(selectors.largeModalButton);
+  }
+
+  get modal() {
+    return cy.get(selectors.modal);
+  }
+
+  get title() {
+    return cy.get(selectors.title);
+  }
+
+  get body() {
+    return cy.get(selectors.body);
+  }
+
+  get closeSmallButton() {
+    return cy.get(selectors.closeSmall);
+  }
+
+  get closeLargeButton() {
+    return cy.get(selectors.closeLarge);
+  }
+
   openSmall() {
-    cy.get(selectors.smallModalButton).click();
+    this.smallModalButton.click();
     return this;
   }
 
   openLarge() {
-    cy.get(selectors.largeModalButton).click();
+    this.largeModalButton.click();
     return this;
   }
 
-  modal() {
-    return cy.get(selectors.modal).should('be.visible');
-  }
-
   close(size) {
-    cy.get(size === 'small' ? selectors.closeSmall : selectors.closeLarge).click();
-    cy.get(selectors.modal).should('not.exist');
+    const button = size === 'small' ? this.closeSmallButton : this.closeLargeButton;
+    button.click();
+    this.modal.should('not.exist');
     return this;
   }
 }

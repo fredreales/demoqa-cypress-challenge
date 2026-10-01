@@ -53,8 +53,8 @@ describe('Book Store — signed-in account', { tags: ['@creates-account'] }, () 
   });
 
   it('shows the collected book with the data the API holds', () => {
-    profile.rows().should('have.length', 1);
-    cy.get(profile.selectors.rows).should('contain', firstBook.author);
+    profile.shouldHaveBookCount(1);
+    profile.rows.should('contain', firstBook.author);
   });
 
   it('removes a book from the collection', () => {

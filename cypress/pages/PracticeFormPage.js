@@ -14,9 +14,8 @@ const selectors = {
     year: '.react-datepicker__year-select',
     day: (day) => `.react-datepicker__day--0${day}:not(.react-datepicker__day--outside-month)`,
   },
-  subjectsContainer: '#subjectsContainer',
   subjectsInput: '#subjectsInput',
-  subjectChips: '.subjects-auto-complete__multi-value__label',
+  subjectsMenu: '.subjects-auto-complete__menu',
   hobbyLabel: (hobby) => `#hobbiesWrapper label:contains(${hobby})`,
   uploadPicture: '#uploadPicture',
   currentAddress: '#currentAddress',
@@ -37,63 +36,111 @@ export default class PracticeFormPage extends BasePage {
     this.selectors = selectors;
   }
 
+  get firstNameInput() {
+    return cy.get(selectors.firstName);
+  }
+
+  get lastNameInput() {
+    return cy.get(selectors.lastName);
+  }
+
+  get emailInput() {
+    return cy.get(selectors.email);
+  }
+
+  get mobileInput() {
+    return cy.get(selectors.mobile);
+  }
+
+  get dateOfBirthInput() {
+    return cy.get(selectors.dateOfBirthInput);
+  }
+
+  get datePicker() {
+    return cy.get(selectors.datePicker.container);
+  }
+
+  get subjectsInput() {
+    return cy.get(selectors.subjectsInput);
+  }
+
+  get subjectsMenu() {
+    return cy.get(selectors.subjectsMenu);
+  }
+
+  get pictureInput() {
+    return cy.get(selectors.uploadPicture);
+  }
+
+  get currentAddressInput() {
+    return cy.get(selectors.currentAddress);
+  }
+
+  get submitButton() {
+    return cy.get(selectors.submit);
+  }
+
+  get confirmationModal() {
+    return cy.get(selectors.modal.root);
+  }
+
+  genderOption(gender) {
+    return cy.get(selectors.genderLabel(gender));
+  }
+
+  hobbyOption(hobby) {
+    return cy.get(selectors.hobbyLabel(hobby));
+  }
+
   fillName({ firstName, lastName }) {
-    cy.get(selectors.firstName).clear();
-    cy.get(selectors.firstName).type(firstName);
-    cy.get(selectors.lastName).clear();
-    cy.get(selectors.lastName).type(lastName);
+    this.fillField(() => this.firstNameInput, firstName);
+    this.fillField(() => this.lastNameInput, lastName);
     return this;
   }
 
   fillEmail(email) {
-    cy.get(selectors.email).clear();
-    cy.get(selectors.email).type(email);
-    return this;
+    return this.fillField(() => this.emailInput, email);
   }
 
   selectGender(gender) {
-    cy.get(selectors.genderLabel(gender)).click();
+    this.genderOption(gender).click();
     return this;
   }
 
   fillMobile(mobile) {
-    cy.get(selectors.mobile).clear();
-    cy.get(selectors.mobile).type(mobile);
-    return this;
+    return this.fillField(() => this.mobileInput, mobile);
   }
 
   setDateOfBirth({ day, month, year }) {
-    cy.get(selectors.dateOfBirthInput).click();
-    cy.get(selectors.datePicker.container).should('be.visible');
+    this.dateOfBirthInput.click();
+    this.datePicker.should('be.visible');
     cy.get(selectors.datePicker.month).select(month);
     cy.get(selectors.datePicker.year).select(year);
     cy.get(selectors.datePicker.day(day)).click();
-    cy.get(selectors.datePicker.container).should('not.exist');
+    this.datePicker.should('not.exist');
     return this;
   }
 
   addSubjects(subjects = []) {
     subjects.forEach((subject) => {
-      cy.get(selectors.subjectsInput).type(subject);
-      cy.get('.subjects-auto-complete__menu').contains(subject).click();
+      this.subjectsInput.type(subject);
+      this.subjectsMenu.contains(subject).click();
     });
     return this;
   }
 
   selectHobbies(hobbies = []) {
-    hobbies.forEach((hobby) => cy.get(selectors.hobbyLabel(hobby)).click());
+    hobbies.forEach((hobby) => this.hobbyOption(hobby).click());
     return this;
   }
 
   uploadPicture(fileName) {
-    cy.get(selectors.uploadPicture).selectFile(`cypress/fixtures/uploads/${fileName}`);
+    this.pictureInput.selectFile(`cypress/fixtures/uploads/${fileName}`);
     return this;
   }
 
   fillCurrentAddress(address) {
-    cy.get(selectors.currentAddress).clear();
-    cy.get(selectors.currentAddress).type(address);
-    return this;
+    return this.fillField(() => this.currentAddressInput, address);
   }
 
   selectStateAndCity(state, city) {
@@ -117,16 +164,12 @@ export default class PracticeFormPage extends BasePage {
   }
 
   submit() {
-    cy.get(selectors.submit).click();
+    this.submitButton.click();
     return this;
   }
 
-  confirmationModal() {
-    return cy.get(selectors.modal.root).should('be.visible');
-  }
-
   assertNotSubmitted() {
-    cy.get(selectors.modal.root).should('not.exist');
+    this.confirmationModal.should('not.exist');
     return this;
   }
 
@@ -143,7 +186,7 @@ export default class PracticeFormPage extends BasePage {
 
   dismissModalWithEscape() {
     cy.get('body').type('{esc}');
-    cy.get(selectors.modal.root).should('not.exist');
+    this.confirmationModal.should('not.exist');
     return this;
   }
 }

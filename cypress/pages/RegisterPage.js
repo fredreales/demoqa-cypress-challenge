@@ -1,4 +1,4 @@
-import BasePage from './BasePage';
+import BasePage, { SECRET_TYPING } from './BasePage';
 
 const selectors = {
   firstName: '#firstname',
@@ -16,32 +16,45 @@ export default class RegisterPage extends BasePage {
     this.selectors = selectors;
   }
 
+  get firstNameInput() {
+    return cy.get(selectors.firstName);
+  }
+
+  get lastNameInput() {
+    return cy.get(selectors.lastName);
+  }
+
+  get userNameInput() {
+    return cy.get(selectors.userName);
+  }
+
+  get passwordInput() {
+    return cy.get(selectors.password);
+  }
+
+  get submitButton() {
+    return cy.get(selectors.submit);
+  }
+
+  get message() {
+    return cy.get(selectors.message);
+  }
+
   visit() {
     cy.visitPage(this.path, { stubRecaptcha: true });
     return this;
   }
 
   fill({ firstName, lastName, userName, password }) {
-    const fields = [
-      [selectors.firstName, firstName],
-      [selectors.lastName, lastName],
-      [selectors.userName, userName],
-      [selectors.password, password],
-    ];
-    fields.forEach(([selector, value]) => {
-      if (value === undefined) return;
-      cy.get(selector).clear();
-      if (value !== '') cy.get(selector).type(value);
-    });
+    this.fillField(() => this.firstNameInput, firstName);
+    this.fillField(() => this.lastNameInput, lastName);
+    this.fillField(() => this.userNameInput, userName);
+    this.fillField(() => this.passwordInput, password, SECRET_TYPING);
     return this;
   }
 
   submit() {
-    cy.get(selectors.submit).click();
+    this.submitButton.click();
     return this;
-  }
-
-  message() {
-    return cy.get(selectors.message);
   }
 }

@@ -4,12 +4,8 @@ const selectors = {
   userName: '#userName-value',
   goToBookStore: '#gotoStore',
   logout: 'Logout',
-  deleteAllBooks: 'Delete All Books',
-  searchBox: '#searchBox',
-  wrapper: '.profile-wrapper',
   table: '.profile-wrapper table',
   rows: '.profile-wrapper tbody tr',
-  rowByText: (text) => `.profile-wrapper tbody tr:contains(${text})`,
   deleteInRow: '[id^="delete-record-"]',
   modal: '.modal-content',
   confirmDelete: '#closeSmallModal-ok',
@@ -22,36 +18,58 @@ export default class ProfilePage extends BasePage {
     this.selectors = selectors;
   }
 
+  get userNameValue() {
+    return cy.get(selectors.userName);
+  }
+
+  get table() {
+    return cy.get(selectors.table);
+  }
+
+  get rows() {
+    return cy.get(selectors.rows);
+  }
+
+  get modal() {
+    return cy.get(selectors.modal);
+  }
+
+  get confirmDeleteButton() {
+    return cy.get(selectors.confirmDelete);
+  }
+
+  get logoutButton() {
+    return cy.contains('button', selectors.logout);
+  }
+
+  row(title) {
+    return cy.contains(selectors.rows, title);
+  }
+
   shouldShowUser(userName) {
-    cy.get(selectors.userName).should('contain', userName);
+    this.userNameValue.should('contain', userName);
     return this;
   }
 
-  rows() {
-    cy.get(selectors.table).should('exist');
-    return cy.get(selectors.table).find('tbody tr');
-  }
-
   shouldHaveBookCount(count) {
-    cy.get(selectors.table).should('exist');
-    cy.get(selectors.table).find('tbody tr').should('have.length', count);
+    this.table.find('tbody tr').should('have.length', count);
     return this;
   }
 
   shouldContainBook(title) {
-    cy.get(selectors.rows).should('contain', title);
+    this.rows.should('contain', title);
     return this;
   }
 
   deleteBook(title) {
-    cy.get(selectors.rowByText(title)).find(selectors.deleteInRow).click();
-    cy.get(selectors.modal).should('contain', 'Do you want to delete this book?');
-    cy.get(selectors.confirmDelete).click();
+    this.row(title).find(selectors.deleteInRow).click();
+    this.modal.should('contain', 'Do you want to delete this book?');
+    this.confirmDeleteButton.click();
     return this;
   }
 
   logout() {
-    cy.contains('button', selectors.logout).click();
+    this.logoutButton.click();
     return this;
   }
 }

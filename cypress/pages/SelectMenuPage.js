@@ -14,6 +14,26 @@ export default class SelectMenuPage extends BasePage {
     this.selectors = selectors;
   }
 
+  get titleSelect() {
+    return cy.get(selectors.selectOne);
+  }
+
+  get colourSelect() {
+    return cy.get(selectors.oldStyleSelect);
+  }
+
+  get carsSelect() {
+    return cy.get(selectors.multiSelectNative);
+  }
+
+  get groupedValue() {
+    return cy.get(selectors.selectedValue(selectors.withOptGroup));
+  }
+
+  get titleValue() {
+    return cy.get(selectors.selectedValue(selectors.selectOne));
+  }
+
   chooseGroupedOption(value) {
     cy.chooseFromReactSelect(selectors.withOptGroup, value);
     return this;
@@ -24,17 +44,13 @@ export default class SelectMenuPage extends BasePage {
     return this;
   }
 
-  selectedIn(container) {
-    return cy.get(selectors.selectedValue(container));
-  }
-
   chooseOldStyleColour(colour) {
-    cy.get(selectors.oldStyleSelect).select(colour);
+    this.colourSelect.select(colour);
     return this;
   }
 
   chooseCars(cars) {
-    cy.get(selectors.multiSelectNative).select(cars);
+    this.carsSelect.select(cars);
     return this;
   }
 }

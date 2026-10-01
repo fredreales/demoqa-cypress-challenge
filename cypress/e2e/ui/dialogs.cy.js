@@ -35,7 +35,7 @@ describe('Browser dialogs', () => {
 
     alerts.clickConfirm();
 
-    cy.get(alerts.selectors.confirmResult).should('have.text', 'You selected Ok');
+    alerts.confirmResult.should('have.text', 'You selected Ok');
   });
 
   it('records the result of dismissing a confirm dialog', () => {
@@ -43,7 +43,7 @@ describe('Browser dialogs', () => {
 
     alerts.clickConfirm();
 
-    cy.get(alerts.selectors.confirmResult).should('have.text', 'You selected Cancel');
+    alerts.confirmResult.should('have.text', 'You selected Cancel');
   });
 
   it('echoes the text entered into a prompt dialog', () => {
@@ -51,7 +51,7 @@ describe('Browser dialogs', () => {
 
     alerts.clickPrompt();
 
-    cy.get(alerts.selectors.promptResult).should('have.text', 'You entered Ada');
+    alerts.promptResult.should('have.text', 'You entered Ada');
   });
 
   it('shows no result when the prompt is cancelled', () => {
@@ -59,7 +59,7 @@ describe('Browser dialogs', () => {
 
     alerts.clickPrompt();
 
-    cy.get(alerts.selectors.promptResult).should('not.exist');
+    alerts.promptResult.should('not.exist');
   });
 });
 
@@ -71,9 +71,9 @@ describe('Modal dialogs', () => {
   it('opens and closes the small modal', { tags: ['@smoke'] }, () => {
     modals.openSmall();
 
-    modals.modal().within(() => {
-      cy.get(modals.selectors.title).should('have.text', 'Small Modal');
-      cy.get(modals.selectors.body).should('contain', 'small modal');
+    modals.modal.should('be.visible').within(() => {
+      modals.title.should('have.text', 'Small Modal');
+      modals.body.should('contain', 'small modal');
     });
 
     modals.close('small');
@@ -82,9 +82,9 @@ describe('Modal dialogs', () => {
   it('opens and closes the large modal', () => {
     modals.openLarge();
 
-    modals.modal().within(() => {
-      cy.get(modals.selectors.title).should('have.text', 'Large Modal');
-      cy.get(modals.selectors.body).should('contain', 'Lorem Ipsum');
+    modals.modal.should('be.visible').within(() => {
+      modals.title.should('have.text', 'Large Modal');
+      modals.body.should('contain', 'Lorem Ipsum');
     });
 
     modals.close('large');
@@ -92,11 +92,11 @@ describe('Modal dialogs', () => {
 
   it('opens only one modal at a time', () => {
     modals.openSmall();
-    modals.modal();
-    cy.get(modals.selectors.modal).should('have.length', 1);
+    modals.modal.should('be.visible');
+    modals.modal.should('have.length', 1);
     modals.close('small');
 
     modals.openLarge();
-    cy.get(modals.selectors.modal).should('have.length', 1);
+    modals.modal.should('have.length', 1);
   });
 });

@@ -36,38 +36,98 @@ export default class WebTablesPage extends BasePage {
     this.selectors = selectors;
   }
 
+  get addRecordButton() {
+    return cy.get(selectors.addRecord);
+  }
+
+  get searchInput() {
+    return cy.get(selectors.searchBox);
+  }
+
+  get table() {
+    return cy.get(selectors.table);
+  }
+
+  get rows() {
+    return cy.get(selectors.rows);
+  }
+
+  get pageIndicator() {
+    return cy.get(selectors.pagination.indicator);
+  }
+
+  get rowsPerPageSelect() {
+    return cy.get(selectors.pagination.rowsPerPage);
+  }
+
+  get formModal() {
+    return cy.get(selectors.form.modal);
+  }
+
+  get firstNameInput() {
+    return cy.get(selectors.form.firstName);
+  }
+
+  get lastNameInput() {
+    return cy.get(selectors.form.lastName);
+  }
+
+  get emailInput() {
+    return cy.get(selectors.form.email);
+  }
+
+  get ageInput() {
+    return cy.get(selectors.form.age);
+  }
+
+  get salaryInput() {
+    return cy.get(selectors.form.salary);
+  }
+
+  get departmentInput() {
+    return cy.get(selectors.form.department);
+  }
+
+  get submitButton() {
+    return cy.get(selectors.form.submit);
+  }
+
+  get closeFormButton() {
+    return cy.get(selectors.form.close);
+  }
+
+  row(text) {
+    return cy.get(selectors.rowByText(text));
+  }
+
+  paginationButton(label) {
+    return cy.get(selectors.pagination.button(label));
+  }
+
   openAddRecordForm() {
-    cy.get(selectors.addRecord).click();
-    cy.get(selectors.form.modal).should('be.visible');
+    this.addRecordButton.click();
+    this.formModal.should('be.visible');
     return this;
   }
 
   fillRecordForm(record) {
-    const { form } = selectors;
-    const fields = [
-      [form.firstName, record.firstName],
-      [form.lastName, record.lastName],
-      [form.email, record.email],
-      [form.age, record.age],
-      [form.salary, record.salary],
-      [form.department, record.department],
-    ];
-    fields.forEach(([selector, value]) => {
-      if (value === undefined) return;
-      cy.get(selector).clear();
-      if (value !== '') cy.get(selector).type(value);
-    });
+    this.fillField(() => this.firstNameInput, record.firstName);
+    this.fillField(() => this.lastNameInput, record.lastName);
+    this.fillField(() => this.emailInput, record.email);
+    this.fillField(() => this.ageInput, record.age);
+    this.fillField(() => this.salaryInput, record.salary);
+    this.fillField(() => this.departmentInput, record.department);
     return this;
   }
 
   closeRecordForm() {
-    cy.get(selectors.form.close).click();
-    cy.get(selectors.form.modal).should('not.exist');
+    this.closeFormButton.click();
+    this.formModal.should('not.exist');
     return this;
   }
 
   submitRecordForm() {
-    cy.get(selectors.form.submit).click();
+    this.submitButton.click();
     return this;
   }
 
@@ -75,55 +135,43 @@ export default class WebTablesPage extends BasePage {
     this.openAddRecordForm();
     this.fillRecordForm(record);
     this.submitRecordForm();
-    cy.get(selectors.form.modal).should('not.exist');
+    this.formModal.should('not.exist');
     return this;
   }
 
   editRecordBy(matchText, changes) {
-    cy.get(selectors.rowByText(matchText)).find(selectors.editInRow).click();
-    cy.get(selectors.form.modal).should('be.visible');
+    this.row(matchText).find(selectors.editInRow).click();
+    this.formModal.should('be.visible');
     this.fillRecordForm(changes);
     this.submitRecordForm();
-    cy.get(selectors.form.modal).should('not.exist');
+    this.formModal.should('not.exist');
     return this;
   }
 
   deleteRecordBy(matchText) {
-    cy.get(selectors.rowByText(matchText)).find(selectors.deleteInRow).click();
+    this.row(matchText).find(selectors.deleteInRow).click();
     return this;
   }
 
   search(term) {
-    cy.get(selectors.searchBox).clear();
-    if (term) cy.get(selectors.searchBox).type(term);
-    return this;
-  }
-
-  rows() {
-    return cy.get(selectors.table).find('tbody tr');
+    return this.fillField(() => this.searchInput, term || '');
   }
 
   rowData() {
-    return cy
-      .get(selectors.table)
-      .then(($table) =>
-        [...$table.find('tbody tr')].map((row) =>
-          [...row.querySelectorAll('td')].slice(0, 6).map((cell) => cell.innerText.trim()),
-        ),
-      );
+    return this.table.then(($table) =>
+      [...$table.find('tbody tr')].map((row) =>
+        [...row.querySelectorAll('td')].slice(0, 6).map((cell) => cell.innerText.trim()),
+      ),
+    );
   }
 
   shouldHaveRowCount(count) {
-    if (count === 0) {
-      cy.get(selectors.table).find('tbody tr').should('have.length', 0);
-    } else {
-      this.rows().should('have.length', count);
-    }
+    this.table.find('tbody tr').should('have.length', count);
     return this;
   }
 
   shouldContainRecord(record) {
-    cy.get(selectors.rowByText(record.email)).within(() => {
+    this.row(record.email).within(() => {
       cy.contains('td', record.firstName).should('exist');
       cy.contains('td', record.lastName).should('exist');
       cy.contains('td', record.department).should('exist');
@@ -132,21 +180,17 @@ export default class WebTablesPage extends BasePage {
   }
 
   shouldNotContainRecord(record) {
-    cy.get(selectors.table).should('not.contain', record.email);
+    this.table.should('not.contain', record.email);
     return this;
   }
 
   setRowsPerPage(count) {
-    cy.get(selectors.pagination.rowsPerPage).select(String(count));
+    this.rowsPerPageSelect.select(String(count));
     return this;
   }
 
   goTo(label) {
-    cy.get(selectors.pagination.button(label)).click();
+    this.paginationButton(label).click();
     return this;
-  }
-
-  pageIndicator() {
-    return cy.get(selectors.pagination.indicator);
   }
 }

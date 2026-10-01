@@ -2,13 +2,10 @@ import BasePage from './BasePage';
 
 const selectors = {
   searchBox: '#searchBox',
-  wrapper: '.books-wrapper',
+  table: '.books-wrapper table',
   rows: '.books-wrapper tbody tr',
-  titleCell: '.books-wrapper tbody tr td:nth-child(2)',
   bookLink: (title) => `[id="see-book-${title}"] a`,
-  loginButton: '#login',
   addToCollection: 'Add To Your Collection',
-  backToStore: 'Back To Book Store',
   detailValue: (field) => `#${field}-wrapper .col-md-9 label`,
 };
 
@@ -20,45 +17,63 @@ export default class BookStorePage extends BasePage {
     this.selectors = selectors;
   }
 
-  visitBook(isbn) {
-    cy.visitPage(`/books?search=${isbn}`);
-    return this;
+  get searchInput() {
+    return cy.get(selectors.searchBox);
   }
 
-  search(term) {
-    cy.get(selectors.searchBox).clear();
-    if (term) cy.get(selectors.searchBox).type(term);
-    return this;
+  get table() {
+    return cy.get(selectors.table);
   }
 
-  rows() {
-    return cy.get(selectors.wrapper).find('tbody tr');
+  get rows() {
+    return cy.get(selectors.rows);
   }
 
-  titles() {
-    return cy
-      .get(selectors.wrapper)
-      .then(($wrapper) =>
-        [...$wrapper.find('tbody tr td:nth-child(2)')].map((cell) => cell.innerText.trim()),
-      );
+  get addToCollectionButton() {
+    return cy.contains('button', selectors.addToCollection);
   }
 
-  openBook(title) {
-    cy.get(selectors.bookLink(title)).click();
-    return this;
+  row(title) {
+    return cy.contains(selectors.rows, title);
   }
 
-  addToCollection() {
-    cy.contains('button', selectors.addToCollection).click();
-    return this;
+  bookLink(title) {
+    return cy.get(selectors.bookLink(title));
   }
 
   detail(field) {
     return cy.get(selectors.detailValue(field));
   }
 
+  visitBook(isbn) {
+    cy.visitPage(`/books?search=${isbn}`);
+    return this;
+  }
+
+  search(term) {
+    return this.fillField(() => this.searchInput, term || '');
+  }
+
+  titles() {
+    return cy
+      .get(selectors.table)
+      .then(($table) =>
+        [...$table.find('tbody tr td:nth-child(2)')].map((cell) => cell.innerText.trim()),
+      );
+  }
+
+  openBook(title) {
+    this.bookLink(title).click();
+    return this;
+  }
+
+  addToCollection() {
+    this.addToCollectionButton.click();
+    return this;
+  }
+
   shouldHaveRowCount(count) {
-    cy.get(selectors.wrapper).find('tbody tr').should('have.length', count);
+    this.table.find('tbody tr').should('have.length', count);
     return this;
   }
 }

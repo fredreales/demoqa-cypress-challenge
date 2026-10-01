@@ -1,3 +1,5 @@
+import LoginPage from '../pages/LoginPage';
+
 Cypress.Commands.add('suppressAdSlots', () => {
   cy.document().then((doc) => {
     if (doc.getElementById('cy-ad-suppressor')) return;
@@ -101,22 +103,9 @@ Cypress.Commands.add('signInByUi', (account) => {
   cy.session(
     account.userName,
     () => {
-      cy.visitPage('/login');
-      cy.get('#userName').type(account.userName);
-      cy.get('#password').type(account.password, { log: false });
-      cy.get('#login').click();
+      new LoginPage().visit().fillCredentials(account.userName, account.password).submit();
       cy.location('pathname', { timeout: 15000 }).should('equal', '/profile');
     },
     { cacheAcrossSpecs: true },
   );
-});
-
-Cypress.Commands.add('loginByUi', (account) => {
-  cy.visitPage('/login');
-
-  cy.get('#userName').type(account.userName);
-  cy.get('#password').type(account.password, { log: false });
-  cy.get('#login').click();
-
-  return cy.location('pathname', { timeout: 15000 }).should('equal', '/profile');
 });

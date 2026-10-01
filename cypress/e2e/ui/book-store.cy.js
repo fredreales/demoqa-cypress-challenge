@@ -15,7 +15,7 @@ describe('Book Store — catalogue', () => {
       bookStore.shouldHaveRowCount(body.books.length);
 
       body.books.forEach((book) => {
-        cy.contains(bookStore.selectors.rows, book.title).should('contain', book.author);
+        bookStore.row(book.title).should('contain', book.author);
       });
     });
   });
@@ -33,7 +33,7 @@ describe('Book Store — catalogue', () => {
     bookStore.search('Kyle Simpson');
 
     bookStore.shouldHaveRowCount(1);
-    cy.get(bookStore.selectors.rows).should('contain', "You Don't Know JS");
+    bookStore.rows.should('contain', "You Don't Know JS");
   });
 
   it('shows no rows for a term that matches nothing', () => {
@@ -86,7 +86,7 @@ describe('Book Store — access control', () => {
 
     login.fillCredentials('not_a_real_user_98765', 'NotARealPassword@1').submit();
 
-    login.error().should('have.text', 'Invalid username or password!');
+    login.errorMessage.should('have.text', 'Invalid username or password!');
     cy.location('pathname').should('equal', '/login');
   });
 
@@ -95,9 +95,9 @@ describe('Book Store — access control', () => {
 
     login.submit();
 
-    cy.get(login.selectors.userName).should('have.class', 'is-invalid');
-    cy.get(login.selectors.password).should('have.class', 'is-invalid');
-    login.error().should('not.exist');
+    login.userNameInput.should('have.class', 'is-invalid');
+    login.passwordInput.should('have.class', 'is-invalid');
+    login.errorMessage.should('not.exist');
   });
 
   it('offers registration from the login page', () => {

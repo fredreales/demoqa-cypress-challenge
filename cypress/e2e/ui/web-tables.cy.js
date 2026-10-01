@@ -23,8 +23,8 @@ describe('Web Tables — record management', () => {
 
     webTables.openAddRecordForm().fillRecordForm(employee).submitRecordForm();
 
-    cy.get(webTables.selectors.form.modal).should('be.visible');
-    cy.get(webTables.selectors.form.department).shouldBeInvalid();
+    webTables.formModal.should('be.visible');
+    webTables.departmentInput.shouldBeInvalid();
     webTables.closeRecordForm();
     webTables.shouldHaveRowCount(SEED_RECORD_COUNT);
   });
@@ -36,7 +36,7 @@ describe('Web Tables — record management', () => {
     webTables.editRecordBy(employee.email, { department: 'Quality Assurance', salary: '99999' });
 
     webTables.shouldContainRecord({ ...employee, department: 'Quality Assurance' });
-    cy.get(webTables.selectors.rowByText(employee.email)).should('contain', '99999');
+    webTables.row(employee.email).should('contain', '99999');
   });
 
   it('removes a record when it is deleted', () => {
@@ -53,14 +53,14 @@ describe('Web Tables — record management', () => {
       webTables.search('Legal');
 
       webTables.shouldHaveRowCount(1);
-      cy.get(webTables.selectors.rows).should('contain', 'Kierra');
+      webTables.rows.should('contain', 'Kierra');
     });
 
     it('matches on a partial, case-insensitive term', () => {
       webTables.search('ciER');
 
       webTables.shouldHaveRowCount(1);
-      cy.get(webTables.selectors.rows).should('contain', 'cierra@example.com');
+      webTables.rows.should('contain', 'cierra@example.com');
     });
 
     it('shows an empty table for a term that matches nothing', () => {
@@ -87,27 +87,27 @@ describe('Web Tables — record management', () => {
         });
       });
 
-      webTables.pageIndicator().should('have.text', '1 of 2');
+      webTables.pageIndicator.should('have.text', '1 of 2');
       webTables.shouldHaveRowCount(10);
 
       webTables.goTo('Next');
-      webTables.pageIndicator().should('have.text', '2 of 2');
+      webTables.pageIndicator.should('have.text', '2 of 2');
       webTables.shouldHaveRowCount(1);
-      cy.get(webTables.selectors.pagination.button('Next')).should('be.disabled');
+      webTables.paginationButton('Next').should('be.disabled');
 
       webTables.goTo('First');
-      webTables.pageIndicator().should('have.text', '1 of 2');
+      webTables.pageIndicator.should('have.text', '1 of 2');
 
       webTables.setRowsPerPage(20);
-      webTables.pageIndicator().should('have.text', '1 of 1');
+      webTables.pageIndicator.should('have.text', '1 of 1');
       webTables.shouldHaveRowCount(11);
     });
 
     it('disables the navigation buttons when everything fits on one page', () => {
-      cy.get(webTables.selectors.pagination.button('First')).should('be.disabled');
-      cy.get(webTables.selectors.pagination.button('Previous')).should('be.disabled');
-      cy.get(webTables.selectors.pagination.button('Next')).should('be.disabled');
-      cy.get(webTables.selectors.pagination.button('Last')).should('be.disabled');
+      webTables.paginationButton('First').should('be.disabled');
+      webTables.paginationButton('Previous').should('be.disabled');
+      webTables.paginationButton('Next').should('be.disabled');
+      webTables.paginationButton('Last').should('be.disabled');
     });
   });
 });

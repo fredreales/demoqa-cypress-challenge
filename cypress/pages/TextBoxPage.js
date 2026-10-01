@@ -21,27 +21,56 @@ export default class TextBoxPage extends BasePage {
     this.selectors = selectors;
   }
 
+  get fullNameInput() {
+    return cy.get(selectors.fullName);
+  }
+
+  get emailInput() {
+    return cy.get(selectors.email);
+  }
+
+  get currentAddressInput() {
+    return cy.get(selectors.currentAddress);
+  }
+
+  get permanentAddressInput() {
+    return cy.get(selectors.permanentAddress);
+  }
+
+  get submitButton() {
+    return cy.get(selectors.submit);
+  }
+
+  get output() {
+    return cy.get(selectors.output.root);
+  }
+
+  get nameOutput() {
+    return cy.get(selectors.output.name);
+  }
+
+  get emailOutput() {
+    return cy.get(selectors.output.email);
+  }
+
+  get currentAddressOutput() {
+    return cy.get(selectors.output.currentAddress);
+  }
+
+  get permanentAddressOutput() {
+    return cy.get(selectors.output.permanentAddress);
+  }
+
   fill({ fullName, email, currentAddress, permanentAddress }) {
-    const entries = [
-      [selectors.fullName, fullName],
-      [selectors.email, email],
-      [selectors.currentAddress, currentAddress],
-      [selectors.permanentAddress, permanentAddress],
-    ];
-    entries.forEach(([selector, value]) => {
-      if (value === undefined) return;
-      cy.get(selector).clear();
-      if (value !== '') cy.get(selector).type(value);
-    });
+    this.fillField(() => this.fullNameInput, fullName);
+    this.fillField(() => this.emailInput, email);
+    this.fillField(() => this.currentAddressInput, currentAddress);
+    this.fillField(() => this.permanentAddressInput, permanentAddress);
     return this;
   }
 
   submit() {
-    cy.get(selectors.submit).click();
+    this.submitButton.click();
     return this;
-  }
-
-  output() {
-    return cy.get(selectors.output.root);
   }
 }

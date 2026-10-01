@@ -1,4 +1,4 @@
-import BasePage from './BasePage';
+import BasePage, { SECRET_TYPING } from './BasePage';
 
 const selectors = {
   userName: '#userName',
@@ -14,25 +14,39 @@ export default class LoginPage extends BasePage {
     this.selectors = selectors;
   }
 
+  get userNameInput() {
+    return cy.get(selectors.userName);
+  }
+
+  get passwordInput() {
+    return cy.get(selectors.password);
+  }
+
+  get submitButton() {
+    return cy.get(selectors.submit);
+  }
+
+  get newUserButton() {
+    return cy.get(selectors.newUser);
+  }
+
+  get errorMessage() {
+    return cy.get(selectors.error);
+  }
+
   fillCredentials(userName, password) {
-    cy.get(selectors.userName).clear();
-    if (userName) cy.get(selectors.userName).type(userName);
-    cy.get(selectors.password).clear();
-    if (password) cy.get(selectors.password).type(password, { log: false });
+    this.fillField(() => this.userNameInput, userName);
+    this.fillField(() => this.passwordInput, password, SECRET_TYPING);
     return this;
   }
 
   submit() {
-    cy.get(selectors.submit).click();
+    this.submitButton.click();
     return this;
   }
 
   goToRegistration() {
-    cy.get(selectors.newUser).click();
+    this.newUserButton.click();
     return this;
-  }
-
-  error() {
-    return cy.get(selectors.error);
   }
 }

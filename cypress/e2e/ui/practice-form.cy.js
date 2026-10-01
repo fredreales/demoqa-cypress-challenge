@@ -16,7 +16,9 @@ describe('Student Registration Form', () => {
 
       practiceForm.fillForm(student).submit();
 
-      practiceForm.confirmationModal().should('contain', 'Thanks for submitting the form');
+      practiceForm.confirmationModal
+        .should('be.visible')
+        .should('contain', 'Thanks for submitting the form');
       practiceForm.submittedValues().should((submitted) => {
         expect(submitted['Student Name']).to.equal(`${student.firstName} ${student.lastName}`);
         expect(submitted['Student Email']).to.equal(student.email);
@@ -58,22 +60,22 @@ describe('Student Registration Form', () => {
     practiceForm.submit();
 
     practiceForm.assertNotSubmitted();
-    cy.get(practiceForm.selectors.firstName).shouldBeInvalid();
-    cy.get(practiceForm.selectors.lastName).shouldBeInvalid();
-    cy.get(practiceForm.selectors.mobile).shouldBeInvalid();
+    practiceForm.firstNameInput.shouldBeInvalid();
+    practiceForm.lastNameInput.shouldBeInvalid();
+    practiceForm.mobileInput.shouldBeInvalid();
   });
 
   it('blocks submission when the mobile number contains letters', () => {
     practiceForm.fillName(buildStudent()).selectGender('Male').fillMobile('55a5b12345').submit();
 
     practiceForm.assertNotSubmitted();
-    cy.get(practiceForm.selectors.mobile).shouldBeInvalid();
+    practiceForm.mobileInput.shouldBeInvalid();
   });
 
   it('caps the mobile number at 10 characters', () => {
     practiceForm.fillMobile('5551234567890');
 
-    cy.get(practiceForm.selectors.mobile).should('have.value', '5551234567');
+    practiceForm.mobileInput.should('have.value', '5551234567');
   });
 
   describe('email validation', () => {
@@ -81,14 +83,14 @@ describe('Student Registration Form', () => {
       cy.fixture('emailValidation').then(({ invalid }) => {
         invalid.forEach(({ value }) => {
           practiceForm.fillEmail(value);
-          cy.get(practiceForm.selectors.email).shouldBeInvalid();
+          practiceForm.emailInput.shouldBeInvalid();
         });
       });
     });
 
     it('accepts a well-formed address', () => {
       practiceForm.fillEmail('ada.lovelace@example.com');
-      cy.get(practiceForm.selectors.email).shouldBeValid();
+      practiceForm.emailInput.shouldBeValid();
     });
   });
 });
