@@ -111,11 +111,21 @@ cypress.config.js               # base URL, timeouts, retries, ad-host blocking
 
 ## Design decisions
 
-**Page objects own selectors, specs own intent.** Every page object exposes an exported
-`selectors` map and intent-revealing methods (`addRecord`, `setDateOfBirth`, `submittedValues`).
-Specs read as user behaviour and contain no CSS. When the DOM changes and demoqa's Web Tables
-page _has_ been rebuilt from React-Table to a plain Bootstrap table, which breaks most tutorials
-for this site, the fix is one line in one file.
+**Page objects own selectors, specs own intent.** Each page object has three layers. A `selectors`
+map holds every selector string in one place. Getters wrap the simple elements
+(`login.errorMessage`, `webTables.searchInput`) and only query, never assert. Methods describe
+user actions (`addRecord`, `setDateOfBirth`, `fillCredentials`) and return `this` so they chain.
+Specs use the getters and contain no CSS; the raw strings are only used where a selector has to be
+composed (`rowByText(email)`), iterated over, or passed to a command such as
+`chooseFromReactSelect`, which a getter cannot do because it returns an element rather than a
+string. When the DOM changes, and demoqa's Web Tables page _has_ been rebuilt since most tutorials
+for this site were written, the fix is one line in one file.
+
+**No chained actions.** A field is never cleared and typed in one chain: `clear()` can re-render
+the input, leaving the chained `type()` acting on a detached element. `BasePage.fillField()`
+queries the element afresh for each step, and the `cypress/unsafe-to-chain-command` lint rule
+catches regressions. Passwords are typed with logging off and special-character parsing disabled,
+so a `{` in a password is typed literally rather than read as a key command.
 
 **Assertions are about data, not layout.** The practice form's confirmation table is read into a
 `{ label: value }` object, so the test asserts "Gender is Male" rather than "row 3 column 2".
